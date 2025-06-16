@@ -5,12 +5,12 @@
 - **前提**：Windows 11を使用していること
 - **前提**：WSL2が未インストールであること
 
-> すでにインストール済みの場合、この手順は不要です。
+> すでにインストール済みの場合，この手順は不要です．
 
-1. 検索ボックスに「コントロールパネル」と入力し、表示されたアプリをクリックする
-2. 「プログラム」をクリックし、「プログラムと機能」内の「Windows の機能の有効化または無効化」を選択する
-3. 「仮想化マシン プラットフォーム」と「Linux用Windowsサブシステム」を有効にし、PCを再起動する
-4. コマンドプロンプトで以下を実行し、WSL2をインストールする
+1. 検索ボックスに「コントロールパネル」と入力し，表示されたアプリをクリックする
+2. 「プログラム」をクリックし，「プログラムと機能」内の「Windows の機能の有効化または無効化」を選択する
+3. 「仮想化マシン プラットフォーム」と「Linux用Windowsサブシステム」を有効にし，PCを再起動する
+4. コマンドプロンプトで以下を実行し，WSL2をインストールする（規定ではUbuntuがインストールされる）
 
     ```sh
     wsl --install
@@ -18,12 +18,16 @@
 
 - 参考：[Microsoft公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/wsl/install#install-wsl-command)
 
-## 1.2. WSL2のバージョン確認とアップグレード
+5. Linuxユーザー情報を設定する．WSLのインストール後，初回接続時にLinuxディストリビューションのユーザーアカウントとパスワードを作成する．インストールが完了すると，スタートメニューにUbuntuが追加されるので，そこからインストールしたディストリビューションに接続する．
+- ここで作成されるアカウントがディストリビューション規定のユーザーとして設定され，接続時に自動的にサインインされる． 
+- ここで作成するユーザーは，Windows側のユーザーとは関係なく，インストールするディストリビューションごとに固有となり，またこのユーザーはLinux管理者としてsudoコマンドが実行できる．
 
-WSL2のバージョンを確認するには、WSL内で以下のコマンドを実行します。
+## 1.2. WSL2のバージョン確認とアップグレード(やりたい人だけ)
+
+WSL2のバージョンを確認するには，WSL内で以下のコマンドを実行します．
 
 ```sh
-cat /etc/os-release
+$ cat /etc/os-release
 ```
 
 **出力例**  
@@ -42,22 +46,23 @@ PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-poli
 UBUNTU_CODENAME=jammy
 ```
 
-wsl内のシステムをアップデートします。
+wsl内のシステムをアップデートします．
 
 ```sh
-sudo apt update
-sudo apt upgrade
+$ sudo apt update
+$ sudo apt upgrade
 ```
-wslをシャットダウンします。
+wslをシャットダウンします．
 
 ```sh
-wsl --shutdown
+$ wsl --shutdown
 ```
 wslにもう一度入り，do-release-upgradeでアップグレード可能なバージョンがあるかを確認
 ```sh
 do-release-upgrade -c
 ```
-以下のような表示が出る
+以下のような表示が出る  
+**出力例** 
 ```sh
 Checking for a new Ubuntu release
 New release '24.04.2 LTS' available.
@@ -65,16 +70,23 @@ Run 'do-release-upgrade' to upgrade to it.
 ```
 この場合24.04.2 LTSにアップグレード可能で以下のコマンドを実行してアップグレードできる．
 ```sh
-sudo do-release-upgrade
+$ sudo do-release-upgrade
 ```
+## 1.3. Docker Engineのインストール
+**前提**：WSL2がインストールされていること  
+- まず,wsl内に入ってgui表示用のLinuxのウィンドウシステム「X11」アプリケーションをインストールする．
+```sh
+$ sudo apt install x11-apps
+```
+xeyesと打って目玉が表示されれば成功．
 
----
+- 次に，Docker Engineをインストールするために必要なパッケージをインストールする．
 
 # 2. Tips
 
 ## 2.1. Gitのインストール
 
-Gitのインストール方法は公式ドキュメント等を参照してください。  
+Gitのインストール方法は公式ドキュメント等を参照してください．  
 ユーザ設定例：
 
 ```sh
@@ -84,11 +96,9 @@ git config --global user.email "your_email@example.com"
 
 ---
 
-# 3. Git 初期化からGitHubへの初回アップロード手順
+## 2.2 Git 初期化からGitHubへの初回アップロード手順
 
-この手順は、ローカルフォルダをGitHub上のリモートリポジトリにアップロードするための一連の操作を説明します。
-
-## 3.1. 手順
+ここでは，ローカルフォルダをGitHub上のリモートリポジトリにアップロードするための一連の操作を説明する．
 
 ```sh
 # 1. 対象のプロジェクトディレクトリへ移動
