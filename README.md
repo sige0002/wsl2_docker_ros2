@@ -50,4 +50,6 @@ sudo apt upgrade
 ユーザの設定は以下の通り  
 git config --global user.name "your_name"  
 git config --global user.email "your_email@example.com"
+git init
+
 
