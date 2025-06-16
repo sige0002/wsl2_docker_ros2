@@ -1,92 +1,140 @@
 # 1. WSL2とDocker EngineでROS2環境を構築する
 
-## 1.1. WSL2のインストール
+## 1.1 WSL2のインストール
 
-- **前提**：Windows 11を使用していること
-- **前提**：WSL2が未インストールであること
+- **前提条件**
+  - Windows 11を使用していること
+  - WSL2が未インストールであること
 
-> すでにインストール済みの場合，この手順は不要です．
+> すでにインストール済みの場合はこの手順を省略する．
 
-1. 検索ボックスに「コントロールパネル」と入力し，表示されたアプリをクリックする
-2. 「プログラム」をクリックし，「プログラムと機能」内の「Windows の機能の有効化または無効化」を選択する
-3. 「仮想化マシン プラットフォーム」と「Linux用Windowsサブシステム」を有効にし，PCを再起動する
-4. コマンドプロンプトで以下を実行し，WSL2をインストールする（規定ではUbuntuがインストールされる）
+1. 検索ボックスに「コントロールパネル」と入力し，表示されたアプリをクリックする．
+2. 「プログラム」をクリックし，「プログラムと機能」内の「Windows の機能の有効化または無効化」を選択する．
+3. 「仮想化マシン プラットフォーム」と「Linux用Windowsサブシステム」を有効にし，PCを再起動する．
+4. コマンドプロンプトで以下を実行し，WSL2をインストールする（規定ではUbuntuがインストールされる）．
 
     ```sh
     wsl --install
     ```
 
-- 参考：[Microsoft公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/wsl/install#install-wsl-command)
+    - 参考: [Microsoft公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/wsl/install#install-wsl-command)
 
 5. Linuxユーザー情報を設定する．WSLのインストール後，初回接続時にLinuxディストリビューションのユーザーアカウントとパスワードを作成する．インストールが完了すると，スタートメニューにUbuntuが追加されるので，そこからインストールしたディストリビューションに接続する．
-- ここで作成されるアカウントがディストリビューション規定のユーザーとして設定され，接続時に自動的にサインインされる． 
-- ここで作成するユーザーは，Windows側のユーザーとは関係なく，インストールするディストリビューションごとに固有となり，またこのユーザーはLinux管理者としてsudoコマンドが実行できる．
 
-## 1.2. WSL2のバージョン確認とアップグレード(やりたい人だけ)
+    - ここで作成されるアカウントが規定のユーザーとして設定され，接続時に自動的にサインインされる．
+    - このユーザーはWindows側のユーザーとは関係なく，インストールするディストリビューションごとに固有となる．また，このユーザーはLinux管理者として`sudo`コマンドが実行できる．
 
-WSL2のバージョンを確認するには，WSL内で以下のコマンドを実行します．
+---
+
+## 1.2 WSL2のバージョン確認とアップグレード（任意）
+
+WSL2のバージョンを確認するには，WSL内で以下のコマンドを実行する．
 
 ```sh
-$ cat /etc/os-release
+cat /etc/os-release
 ```
 
-**出力例**  
+**出力例**
 ```
 PRETTY_NAME="Ubuntu 22.04.2 LTS"
 NAME="Ubuntu"
 VERSION_ID="22.04"
 VERSION="22.04.2 LTS (Jammy Jellyfish)"
 VERSION_CODENAME=jammy
-ID=ubuntu
-ID_LIKE=debian
-HOME_URL="https://www.ubuntu.com/"
-SUPPORT_URL="https://help.ubuntu.com/"
-BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-UBUNTU_CODENAME=jammy
+...
 ```
 
-wsl内のシステムをアップデートします．
+システムをアップデートする．
 
 ```sh
-$ sudo apt update
-$ sudo apt upgrade
+sudo apt update
+sudo apt upgrade
 ```
-wslをシャットダウンします．
+
+WSLをシャットダウンする．
 
 ```sh
-$ wsl --shutdown
+wsl --shutdown
 ```
-wslにもう一度入り，do-release-upgradeでアップグレード可能なバージョンがあるかを確認
+
+再度WSLに入り，アップグレード可能なバージョンを確認する．
+
 ```sh
 do-release-upgrade -c
 ```
-以下のような表示が出る  
-**出力例** 
-```sh
+
+**出力例**
+```
 Checking for a new Ubuntu release
 New release '24.04.2 LTS' available.
 Run 'do-release-upgrade' to upgrade to it.
 ```
-この場合24.04.2 LTSにアップグレード可能で以下のコマンドを実行してアップグレードできる．
-```sh
-$ sudo do-release-upgrade
-```
-## 1.3. Docker Engineのインストール
-**前提**：WSL2がインストールされていること  
-- まず,wsl内に入ってgui表示用のLinuxのウィンドウシステム「X11」アプリケーションをインストールする．
-```sh
-$ sudo apt install x11-apps
-```
-xeyesと打って目玉が表示されれば成功．
 
-- 次に，Docker Engineをインストールするために必要なパッケージをインストールする．
+アップグレードする場合は以下を実行する．
+
+```sh
+sudo do-release-upgrade
+```
+
+---
+
+## 1.3 Docker Engineのインストール
+
+- **前提条件**：WSL2がインストールされていること
+
+1. WSL内に入り，GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストールする．
+
+    ```sh
+    sudo apt install x11-apps
+    ```
+
+    `xeyes`と入力し，目玉が表示されれば成功と判断する．
+
+2. Docker Engineをインストールするために必要なパッケージをインストールする．
+
+3. Dockerの古いバージョンの削除  
+   Docker Engineをインストールする前に，競合するパッケージをアンインストールする．  
+   参考: [Docker公式ドキュメント](https://docs.docker.com/engine/install/ubuntu/)
+
+    ```sh
+    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+    ```
+
+4. Docker Engineのリポジトリを追加する．
+
+    ```sh
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+    ```
+
+5. 最新バージョンをインストールするには，次のコマンドを実行する（特定のバージョンを入れたい場合は参考2を参照）．
+
+    ```sh
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ```
+
+6. イメージを実行してインストールが成功したことを確認する．
+
+    ```sh
+    sudo docker run hello-world
+    ```
+
+7. 実行権限がない場合は以下のコマンドを実行する．
+
+    ```sh
+    sudo usermod -aG docker $USER
+    ```
+
+    その後，WSLを再起動する．
 
 # 2. Tips
 
-## 2.1. Gitのインストール
+## 2.1 Gitのインストール
 
-Gitのインストール方法は公式ドキュメント等を参照してください．  
+Gitのインストール方法は公式ドキュメント等を参照する．  
 ユーザ設定例：
 
 ```sh
