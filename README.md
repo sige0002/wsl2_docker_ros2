@@ -1,160 +1,210 @@
+# WSL2とDockerでros2を動かしてみよう
+# 目次
+- [WSL2とDockerでros2を動かしてみよう](#wsl2とdockerでros2を動かしてみよう)
+- [目次](#目次)
+- [1. WSL2とDocker EngineでROS2環境を構築する](#1-wsl2とdocker-engineでros2環境を構築する)
+  - [1.1 WSL2のインストール](#11-wsl2のインストール)
+    - [前提条件](#前提条件)
+    - [1.2 WSLの起動とシャットダウン](#12-wslの起動とシャットダウン)
+  - [1.2 WSL2のバージョン確認とアップグレード（任意）](#12-wsl2のバージョン確認とアップグレード任意)
+  - [1.3 Docker Engineのインストール](#13-docker-engineのインストール)
+    - [前提条件](#前提条件-1)
+- [2. 実行まで](#2-実行まで)
+  - [インストール](#インストール)
+- [3. Tips](#3-tips)
+  - [2.1 Gitのインストール](#21-gitのインストール)
+  - [2.2 Git 初期化からGitHubへの初回アップロード手順](#22-git-初期化からgithubへの初回アップロード手順)
+
+
 # 1. WSL2とDocker EngineでROS2環境を構築する
-- すでにwslとdocker engineがある場合は，2. 「実行まで」から始める．
+
+> **すでにWSLとDocker Engineがある場合は，[2. 実行まで](#2-実行まで)から始めてください。**
+
+---
 
 ## 1.1 WSL2のインストール
 
-- **前提条件**
-  - Windows 11を使用していること
-  - WSL2が未インストールであること
+### 前提条件
 
-> すでにインストール済みの場合はこの手順を省略する．
+- Windows 11を使用していること
+- WSL2が未インストールであること
 
-1. 検索ボックスに「コントロールパネル」と入力し，表示されたアプリをクリックする．
-2. 「プログラム」をクリックし，「プログラムと機能」内の「Windows の機能の有効化または無効化」を選択する．
-3. 「仮想化マシン プラットフォーム」と「Linux用Windowsサブシステム」を有効にし，PCを再起動する．
-4. コマンドプロンプトで以下を実行し，WSL2をインストールする（規定ではUbuntuがインストールされる）．
+> すでにインストール済みの場合はこの手順を省略してください。
 
-    ```sh
-    wsl --install
-    ```
+1. 検索ボックスに「コントロールパネル」と入力し、表示されたアプリをクリックします。
+2. 「プログラム」→「プログラムと機能」→「Windows の機能の有効化または無効化」を選択します。
+3. 「仮想化マシン プラットフォーム」と「Linux用Windowsサブシステム」を有効にし、PCを再起動します。
+4. コマンドプロンプトで以下を実行し、WSL2をインストールします（規定ではUbuntuがインストールされます）。
 
-    - 参考: [Microsoft公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/wsl/install#install-wsl-command)
+  ```sh
+  wsl --install
+  ```
 
-5. Linuxユーザー情報を設定する．WSLのインストール後，初回接続時にLinuxディストリビューションのユーザーアカウントとパスワードを作成する．インストールが完了すると，スタートメニューにUbuntuが追加されるので，そこからインストールしたディストリビューションに接続する．
+  - 参考: [Microsoft公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/wsl/install#install-wsl-command)
 
-    - ここで作成されるアカウントが規定のユーザーとして設定され，接続時に自動的にサインインされる．
-    - このユーザーはWindows側のユーザーとは関係なく，インストールするディストリビューションごとに固有となる．また，このユーザーはLinux管理者として`sudo`コマンドが実行できる．
+5. Linuxユーザー情報を設定します。WSLのインストール後、初回接続時にLinuxディストリビューションのユーザーアカウントとパスワードを作成します。インストールが完了すると、スタートメニューにUbuntuが追加されるので、そこからインストールしたディストリビューションに接続します。
+
+  - ここで作成されるアカウントが規定のユーザーとなり、接続時に自動的にサインインされます。
+  - このユーザーはWindows側のユーザーとは関係なく、ディストリビューションごとに固有です。また、Linux管理者として`sudo`コマンドが実行できます。
+
+---
+
+### 1.2 WSLの起動とシャットダウン
+
+- WSLを起動するには、スタートメニューから「Ubuntu」などのインストールしたディストリビューションを選択するか、コマンドプロンプトやPowerShellで以下を実行します。
+
+  ```sh
+  wsl
+  ```
+
+- VSCodeではRemote Development拡張機能を使用してWSLに接続できます。左下の`><`アイコンをクリックし、WSLに接続を選択してください。
+
+- WSLをシャットダウンするには、以下を実行します。
+
+  ```sh
+  wsl --shutdown
+  ```
 
 ---
 
 ## 1.2 WSL2のバージョン確認とアップグレード（任意）
 
-WSL2のバージョンを確認するには，WSL内で以下のコマンドを実行する．
+- WSL2のバージョンを確認するには、WSL内で以下を実行します。
 
-```sh
-cat /etc/os-release
-```
+  ```sh
+  cat /etc/os-release
+  ```
 
-**出力例**
-```
-PRETTY_NAME="Ubuntu 22.04.2 LTS"
-NAME="Ubuntu"
-VERSION_ID="22.04"
-VERSION="22.04.2 LTS (Jammy Jellyfish)"
-VERSION_CODENAME=jammy
-...
-```
+  **出力例**
+  ```
+  PRETTY_NAME="Ubuntu 22.04.2 LTS"
+  NAME="Ubuntu"
+  VERSION_ID="22.04"
+  VERSION="22.04.2 LTS (Jammy Jellyfish)"
+  VERSION_CODENAME=jammy
+  ...
+  ```
 
-システムをアップデートする．
+- システムをアップデートします。
 
-```sh
-sudo apt update
-sudo apt upgrade
-```
+  ```sh
+  sudo apt update
+  sudo apt upgrade
+  ```
 
-WSLをシャットダウンする．
+- WSLをシャットダウンします。
 
-```sh
-wsl --shutdown
-```
+  ```sh
+  wsl --shutdown
+  ```
 
-再度WSLに入り，アップグレード可能なバージョンを確認する．
+- 再度WSLに入り、アップグレード可能なバージョンを確認します。
 
-```sh
-do-release-upgrade -c
-```
+  ```sh
+  do-release-upgrade -c
+  ```
 
-**出力例**
-```
-Checking for a new Ubuntu release
-New release '24.04.2 LTS' available.
-Run 'do-release-upgrade' to upgrade to it.
-```
+  **出力例**
+  ```
+  Checking for a new Ubuntu release
+  New release '24.04.2 LTS' available.
+  Run 'do-release-upgrade' to upgrade to it.
+  ```
 
-アップグレードする場合は以下を実行する．
+- アップグレードする場合は以下を実行します。
 
-```sh
-sudo do-release-upgrade
-```
+  ```sh
+  sudo do-release-upgrade
+  ```
 
 ---
 
 ## 1.3 Docker Engineのインストール
 
-- **前提条件**：WSL2がインストールされていること
+### 前提条件
 
-1. WSL内に入り，GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストールする．
+- WSL2がインストールされていること
 
-    ```sh
-    sudo apt install x11-apps
-    ```
+1. WSL内に入り、GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストールします。
 
-    `xeyes`と入力し，目玉が表示されれば成功と判断する．
+  ```sh
+  sudo apt install x11-apps
+  ```
 
-2. Docker Engineをインストールするために必要なパッケージをインストールする．
+  `xeyes`と入力し、目玉が表示されれば成功です。
+
+2. Docker Engineをインストールするために必要なパッケージをインストールします。
 
 3. Dockerの古いバージョンの削除  
-   Docker Engineをインストールする前に，競合するパッケージをアンインストールする．  
+   Docker Engineをインストールする前に、競合するパッケージをアンインストールします。  
    参考: [Docker公式ドキュメント](https://docs.docker.com/engine/install/ubuntu/)
 
-    ```sh
-    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
-    ```
+  ```sh
+  for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+  ```
 
-4. Docker Engineのリポジトリを追加する．
+4. Docker Engineのリポジトリを追加します。
 
-    ```sh
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    ```
+  ```sh
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update
+  ```
 
-5. 最新バージョンをインストールするには，次のコマンドを実行する（特定のバージョンを入れたい場合は参考2を参照）．
+5. 最新バージョンをインストールするには、次のコマンドを実行します（特定のバージョンを入れたい場合は公式ドキュメント参照）。
 
-    ```sh
-    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    ```
+  ```sh
+  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  ```
 
-6. イメージを実行してインストールが成功したことを確認する．
+6. イメージを実行してインストールが成功したことを確認します。
 
-    ```sh
-    sudo docker run hello-world
-    ```
+  ```sh
+  sudo docker run hello-world
+  ```
 
-7. 実行権限がない場合は以下のコマンドを実行する．
+7. 実行権限がない場合は以下を実行します。
 
-    ```sh
-    sudo usermod -aG docker $USER
-    ```
+  ```sh
+  sudo usermod -aG docker $USER
+  ```
 
-    その後，WSLを再起動する．
+  その後、WSLを再起動してください。
+
+---
 
 # 2. 実行まで
+
 ## インストール
-- git clone でリポジトリをクローンする．
-```sh
-git clone https://github.com/your-username/your-repo.git
-```
+
+- `git clone`でリポジトリをクローンします。
+
+  ```sh
+  git clone https://github.com/your-username/your-repo.git
+  ```
+
+---
 
 # 3. Tips
 
 ## 2.1 Gitのインストール
 
-Gitのインストール方法は公式ドキュメント等を参照する．  
-ユーザ設定例：
+- Gitのインストール方法は公式ドキュメント等を参照してください。
 
-```sh
-git config --global user.name "your_name"
-git config --global user.email "your_email@example.com"
-```
+- ユーザ設定例：
+
+  ```sh
+  git config --global user.name "your_name"
+  git config --global user.email "your_email@example.com"
+  ```
 
 ---
 
 ## 2.2 Git 初期化からGitHubへの初回アップロード手順
 
-ここでは，ローカルフォルダをGitHub上のリモートリポジトリにアップロードするための一連の操作を説明する．
+ローカルフォルダをGitHub上のリモートリポジトリにアップロードするための一連の操作例です。
 
 ```sh
 # 1. 対象のプロジェクトディレクトリへ移動
