@@ -1,0 +1,28 @@
+services:
+  ros:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+      #network: host
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${http_proxy}
+        HTTP_PROXY: ${http_proxy}
+        HTTPS_PROXY: ${http_proxy}
+        IMAGE_NAME: ${IMAGE_NAME}
+        ROS_DISTRO_NAME: ${ROS_DISTRO_NAME}
+      target: ros2
+    image: ros-${ROS_DISTRO_NAME}-docker
+    container_name: ros-${ROS_DISTRO_NAME}-docker
+    environment:
+      http_proxy: ${http_proxy}
+      https_proxy: ${http_proxy}
+      #no_proxy: ${no_proxy}
+      HTTP_PROXY: ${http_proxy}
+      HTTPS_PROXY: ${http_proxy}
+      #NO_PROXY: ${no_proxy}
+      DISPLAY: ${DISPLAY}
+    working_dir: /root
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    tty: true

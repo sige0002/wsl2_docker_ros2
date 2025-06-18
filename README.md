@@ -1,4 +1,5 @@
 # 1. WSL2とDocker EngineでROS2環境を構築する
+- すでにwslとdocker engineがある場合は，2. 「実行まで」から始める．
 
 ## 1.1 WSL2のインストール
 
@@ -130,7 +131,14 @@ sudo do-release-upgrade
 
     その後，WSLを再起動する．
 
-# 2. Tips
+# 2. 実行まで
+## インストール
+- git clone でリポジトリをクローンする．
+```sh
+git clone https://github.com/your-username/your-repo.git
+```
+
+# 3. Tips
 
 ## 2.1 Gitのインストール
 
@@ -165,13 +173,22 @@ git add .
 git commit -m "Initial commit"
 
 # 5. リモートリポジトリを登録（すでに origin がある場合は set-url で上書き）
-git remote add origin https://github.com/USERNAME/REPO_NAME.git
-# または（origin が既に存在する場合）
-git remote set-url origin https://github.com/USERNAME/REPO_NAME.git
 
-# 6. ブランチ名を main に変更（GitHub のデフォルトに合わせる）
+# まだリモートリポジトリを登録していない場合
+git remote add origin <リモートリポジトリURL>
+
+# 例
+git remote add origin https://github.com/your-username/your-repo.git
+
+# すでに origin が存在する場合はURLを上書き
+git remote set-url origin <リモートリポジトリURL>
+
+# 例
+git remote set-url origin https://github.com/your-username/your-repo.git
+
+# ブランチ名を main に変更（GitHub のデフォルトに合わせる）
 git branch -M main
 
-# 7. リモートリポジトリへ push（初回）
+# リモートリポジトリへ push（初回）
 git push -u origin main
 ```
