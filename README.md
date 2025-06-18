@@ -75,7 +75,7 @@
 - Windows 11を使用している（10では未検証）
 - WSL2が未インストールである
 - ホスト（Windows側）にVSCodeがインストールされている（開発環境として推奨）
-- VSCodeに必要な拡張機能はTipsを参照
+- VSCodeに必要な拡張機能はTipsを参照（未編集）
 - 必須なのは「Remote Development」「Dev Containers」
 - 基本UbuntuはLTSバージョンを使用することを推奨、ROSのバージョンに合わせて選択すること
 
