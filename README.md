@@ -215,6 +215,12 @@ sudo do-release-upgrade
     ```sh
     git clone https://github.com/sige0002/wsl2_docker_ros2.git
     ```
+    > **注意**:
+    > クローンする際は、WSL内で実行してください。WindowsのコマンドプロンプトやPowerShellでは動作しません。また，developブランチの方が最新の情報が反映されているため、必要に応じてブランチを切り替えてください。
+
+    ```sh
+    git clone -b develop https://github.com/sige0002/wsl2_docker_ros2.git
+    ```
 
 2. **`.env`ファイルの作成**  
    `.env.example`をコピーして`.env`にリネームします。
