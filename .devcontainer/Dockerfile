@@ -78,7 +78,7 @@ ENV HTTP_PROXY=${HTTP_PROXY}
 ENV HTTPS_PROXY=${HTTPS_PROXY}
 
 
-# ROS2 apt source追加
+# ROS2 GPG キーとリポジトリの追加
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
     http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
@@ -101,6 +101,10 @@ RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then \
     . /opt/ros/${ROS_DISTRO_NAME}/setup.sh && \
     rosdep init && \
     rosdep update
+
+# ROS2 環境変数の設定
+# ROS2環境構築後のステージで
+RUN echo "source /opt/ros/${ROS_DISTRO_NAME}/setup.bash" >> /root/.bashrc
 
 
 # ros2ユーザーで作業を続ける場合
