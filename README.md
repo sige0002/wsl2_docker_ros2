@@ -259,7 +259,7 @@ sudo do-release-upgrade
      プロキシを使用する場合は、`http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`の値を設定してください。
 
      > **注意:**  
-     > すべて空欄の場合のみビルドできる設定になっています。一部のみ変更したい場合は、`Dockerfile`内の該当箇所（`RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then ...`）を編集してください。
+     > すべて空欄の場合もしくは，すべて設定してある場合のみビルドできる設定になっています。一部のみ変更したい場合は、`Dockerfile`内の該当箇所（`RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then ...`）を編集してください。
 
 4. **Dockerイメージのビルド**  
    以下のコマンドをクローンしたフォルダディレクトリで実行して、Dockerイメージをビルドします。
