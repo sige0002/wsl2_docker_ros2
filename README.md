@@ -155,7 +155,7 @@ sudo do-release-upgrade
 
 **前提条件**：WSL2がインストールされていること
 
-1. WSL内に入り，GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストール．
+1. WSL内に入り，GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストール．このときupdateもしておく
 
     ```sh
     sudo apt-get update
