@@ -290,6 +290,11 @@ sudo do-release-upgrade
     ```
 
    ここで `<コンテナ名>` は、`docker compose up` 実行時に表示されるコンテナ名を指定します。
+   devcontainerを使ったvscode開発環境を構築する場合，.devcontainerがあるディレクトリで以下のコマンドを実行します。
+
+    ```sh
+    code .
+    ```
 
 6. **GUIアプリケーションの確認**  
    コンテナ内でGUIアプリケーションを実行して、X11が正しく設定されているか確認します。
