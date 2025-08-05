@@ -2,4 +2,30 @@ memo.txt
 .env
 build/*
 log/*
-src/*
+
+# 大きなバイナリファイル
+*.zip
+*.tar.gz
+*.deb
+*.rpm
+
+# ROS2ワークスペースのビルド成果物
+ros2_workspace/build/
+ros2_workspace/install/
+ros2_workspace/log/
+
+# 大きなSDKファイルは除外（READMEで取得方法を記載）
+ros2_workspace/src/*.zip
+
+# IDE関連
+.vscode/settings.json
+.idea/
+
+# OS関連
+.DS_Store
+Thumbs.db
+
+# 一時ファイル
+*.tmp
+*.bak
+*~
