@@ -25,4 +25,5 @@ services:
     working_dir: /root
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./ros2_workspace:/root/ros2_ws
     tty: true

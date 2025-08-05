@@ -1,6 +1,6 @@
 # ---------- ビルド引数 ----------
-ARG IMAGE_NAME=ubuntu:24.04
-ARG ROS_DISTRO_NAME=jazzy
+ARG IMAGE_NAME
+ARG ROS_DISTRO_NAME
 ARG http_proxy
 ARG https_proxy
 ARG HTTP_PROXY

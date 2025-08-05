@@ -2,3 +2,4 @@ memo.txt
 .env
 build/*
 log/*
+src/*
