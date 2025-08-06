@@ -13,7 +13,7 @@ services:
         ROS_DISTRO_NAME: ${ROS_DISTRO_NAME}
       target: ros2
     image: ros-${ROS_DISTRO_NAME}-docker
-    container_name: ros-${ROS_DISTRO_NAME}-docker
+    container_name: ros-${ROS_DISTRO_NAME}-docker-${RANDOM_ID}
     environment:
       http_proxy: ${http_proxy}
       https_proxy: ${http_proxy}
@@ -22,6 +22,7 @@ services:
       HTTPS_PROXY: ${http_proxy}
       #NO_PROXY: ${no_proxy}
       DISPLAY: ${DISPLAY}
+      RANDOM_ID: ${RANDOM_ID}
     working_dir: /root
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
