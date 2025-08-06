@@ -60,6 +60,10 @@ RUN apt-get update && apt-get install -y \
     iputils-ping \
     net-tools \
     dnsutils \
+    usbutils \
+    udev \
+    libusb-1.0-0-dev \
+    libusb-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # ---------- ROS2 ステージ ----------
@@ -109,6 +113,9 @@ RUN echo "source /opt/ros/${ROS_DISTRO_NAME}/setup.bash" >> /root/.bashrc
 # ROS2ワークスペースのコピー（ディレクトリ内容を再帰的にコピー）
 COPY ros2_workspace/ /root/ros2_ws/
 COPY components/ /root/components/
+
+# USBデバイスアクセスのためのユーザー権限設定
+RUN usermod -a -G dialout,plugdev root
 
 # ros2ユーザーで作業を続ける場合
 USER root
