@@ -1,4 +1,87 @@
+# ==========================================================================
+# Docker & ROS2 プロジェクト用 .gitignore
+# ==========================================================================
+
+# ---------- 個人用ファイル ----------
 memo.txt
 .env
-build/*
-log/*
+
+# ---------- ビルド成果物 ----------
+build/
+log/
+install/
+
+# ---------- ROS2 ワークスペース ----------
+# ビルド成果物
+ros2_workspace/build/
+ros2_workspace/install/
+ros2_workspace/log/
+
+# 大きなファイル（ZIP、SDK等）
+ros2_workspace/src/*.zip
+
+# ---------- アーカイブ・バイナリファイル ----------
+*.zip
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.7z
+*.rar
+*.deb
+*.rpm
+
+# ---------- IDE・エディタ関連 ----------
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ---------- OS固有ファイル ----------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ---------- 一時ファイル ----------
+*.tmp
+*.temp
+*.bak
+*.orig
+*.log
+
+# ---------- Python関連 ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# ---------- Node.js関連 ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

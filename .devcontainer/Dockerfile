@@ -1,6 +1,6 @@
 # ---------- ビルド引数 ----------
-ARG IMAGE_NAME=ubuntu:24.04
-ARG ROS_DISTRO_NAME=jazzy
+ARG IMAGE_NAME
+ARG ROS_DISTRO_NAME
 ARG http_proxy
 ARG https_proxy
 ARG HTTP_PROXY
@@ -106,6 +106,9 @@ RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then \
 # ROS2環境構築後のステージで
 RUN echo "source /opt/ros/${ROS_DISTRO_NAME}/setup.bash" >> /root/.bashrc
 
+# ROS2ワークスペースのコピー
+COPY ros2_workspace /root/ros2_ws
+COPY components /root/components
 
 # ros2ユーザーで作業を続ける場合
 USER root
