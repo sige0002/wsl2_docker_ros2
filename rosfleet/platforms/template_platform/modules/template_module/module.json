@@ -1,0 +1,7 @@
+{
+  "name": "template_module",
+  "description": "ROS 2 rclpyのサンプルノードを持つテンプレートモジュール",
+  "maintainer": "your_name <you@example.com>",
+  "license": "Apache-2.0"
+}
+

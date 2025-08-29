@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain id="any">
+    <General>
+      <AllowMulticast>true</AllowMulticast>
+    </General>
+    <Discovery>
+      <!-- peersは環境変数 CYCLONEDDS_PEERS で上書き可能 -->
+      <Peers>
+        <!-- 例: udp/192.168.1.100,udp/192.168.1.101 -->
+      </Peers>
+    </Discovery>
+  </Domain>
+  <Tracing>
+    <Verbosity>warning</Verbosity>
+  </Tracing>
+  <Internal>
+    <Watermarks>
+      <WhcHigh>5000</WhcHigh>
+    </Watermarks>
+  </Internal>
+  <Compatibility>
+    <StandardsConformance>lax</StandardsConformance>
+  </Compatibility>
+  <OpenSplice>
+    <Reporting>disabled</Reporting>
+  </OpenSplice>
+  <Cyclone>
+    <NetworkInterfaceAddress>auto</NetworkInterfaceAddress>
+  </Cyclone>
+  <ExcludedTopicKinds>
+    <TopicKind>builtin</TopicKind>
+  </ExcludedTopicKinds>
+</CycloneDDS>
+

@@ -1,0 +1,17 @@
+{
+  "name": "template_platform",
+  "ros_distro": "humble",
+  "launch_file": "launch/platform.launch.py",
+  "env_files": [
+    "platform.env",
+    "../../cyclonedds/peers.env"
+  ],
+  "modules": [
+    {
+      "name": "template_module",
+      "path": "modules/template_module",
+      "params": "modules/template_module/params/example.yaml"
+    }
+  ]
+}
+

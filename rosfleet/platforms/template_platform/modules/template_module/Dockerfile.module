@@ -1,0 +1,26 @@
+ARG BASE_IMAGE=rosfleet/base:latest
+FROM ${BASE_IMAGE}
+
+SHELL ["/bin/bash", "-lc"]
+
+# ここでは最小の雛形のみ。必要に応じて依存関係を追加してください。
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      python3-pip \
+      && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# ソース配置（必要に応じて編集）
+COPY platforms/template_platform/modules/template_module/src /app/src
+COPY platforms/template_platform/modules/template_module/params /app/params
+
+# 追加のセットアップが必要ならここに記述（colconやpipなど）
+# 例: pipでツール系を入れる
+RUN pip3 install --no-cache-dir \
+      pyyaml
+
+ENV PLATFORM=template_platform \
+    MODULE=template_module
+
+CMD ["bash", "-lc", "echo 'template_module container ready'; sleep infinity"]
+

@@ -1,0 +1,24 @@
+FROM ros:humble-ros-core
+
+SHELL ["/bin/bash", "-lc"]
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      ros-humble-rmw-cyclonedds-cpp \
+      python3-pip \
+      iproute2 \
+      iputils-ping \
+      net-tools \
+      && rm -rf /var/lib/apt/lists/*
+
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp \
+    ROS_LOCALHOST_ONLY=0
+
+WORKDIR /workspace
+
+COPY tools/docker/helpers.sh /opt/rosfleet/helpers.sh
+COPY tools/docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh /opt/rosfleet/helpers.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
+
