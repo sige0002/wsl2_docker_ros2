@@ -20,6 +20,12 @@ ros2_workspace/log/
 # 大きなファイル（ZIP、SDK等）
 ros2_workspace/src/*.zip
 
+# ---------- 管理対象外にするディレクトリ内のサブディレクトリ ----------
+# 直下のサブディレクトリ配下を無視（フォルダのみ）。
+# 例: /components/test は無視、/components 配下の直下ファイルは追跡。
+/components/*/
+/ros2_workspace/*/
+
 # ---------- アーカイブ・バイナリファイル ----------
 *.zip
 *.tar.gz
