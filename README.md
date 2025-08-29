@@ -1,7 +1,7 @@
 # 目次
 
 - [目次](#目次)
-- [WSL2とDocker EngineでROS2環境を構築する ](#wsl2とdocker-engineでros2環境を構築する-)
+- [WSL2とDocker EngineでROS2環境を構築する](#wsl2とdocker-engineでros2環境を構築する)
 - [はじめに](#はじめに)
   - [概要](#概要)
   - [本ドキュメントの目的](#本ドキュメントの目的)
@@ -13,25 +13,33 @@
   - [1.3 Docker Engineのインストール](#13-docker-engineのインストール)
 - [2. 実行](#2-実行)
   - [インストール手順](#インストール手順)
+  - [プロジェクト構造](#プロジェクト構造)
 - [3. Tips](#3-tips)
   - [3.1 Gitのインストール](#31-gitのインストール)
   - [3.2 Git 初期化からGitHubへの初回アップロード手順](#32-git-初期化からgithubへの初回アップロード手順)
 
 ---
 
-# WSL2とDocker EngineでROS2環境を構築する <!-- TOC -->
+# WSL2とDocker EngineでROS2環境を構築する
+
+---
 
 # はじめに
 
 このドキュメントでは、**WSL2** と **Docker Engine** を用いて **ROS2 環境を構築する手順**を解説します。  
-この構成を覚えることで
+この構成を覚えることでローカル環境に依存せずにROS2の開発環境を構築できるようになります。
+> **注意:**  
+> GitHubリポジトリに`develop`ブランチが存在する場合、そちらが最新の開発環境となっています。必要に応じて`develop`ブランチを利用してください。
+
+>**issueの投稿:**
+>問題が発生した場合はissueに投稿してください.また、その他TipsはWikiに上げていることがあります．
 
 ---
 
 ## 概要
 
 - **WSL2（Windows Subsystem for Linux v2）**  
-  Windows 上で Linux 環境を実行できる機能です。
+  Windows上でLinux環境を実行できる機能です。
 - **Docker Engine**  
   コンテナ化されたアプリケーションを実行するためのプラットフォームです。
 - **ROS2（Robot Operating System 2）**  
@@ -48,9 +56,9 @@
 
 ## なぜ Docker Desktop ではなく Docker Engine？
 
-- Docker Desktop は **商用利用が有料**です。
+- Docker Desktopは **商用利用が有料**です。
 - 一方で、**WSL2 + Docker Engine の構成は無料で利用可能**です。
-- よって、コストを抑えて ROS2 開発環境を構築することができます。
+- よって、コストを抑えてROS2開発環境を構築することができます。
 
 ---
 
@@ -58,9 +66,9 @@
 
 このセットアップを完了することで：
 
-- Docker 上で ROS2 環境が動作する
-- Windows 上で安定した ROS2 開発ができる
-- GUI アプリケーション（RViz など）も表示可能
+- Docker上でROS2環境が動作する
+- Windows上で安定したROS2開発ができる
+- GUIアプリケーション（RVizなど）も表示可能
 
 ---
 
@@ -155,9 +163,10 @@ sudo do-release-upgrade
 
 **前提条件**：WSL2がインストールされていること
 
-1. WSL内に入り、GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストール。
+1. WSL内に入り、GUI表示用のLinuxウィンドウシステム「X11」アプリケーションをインストール。このときupdateもしておく
 
     ```sh
+    sudo apt-get update
     sudo apt install x11-apps
     ```
 
@@ -176,6 +185,12 @@ sudo do-release-upgrade
 4. Docker Engineのリポジトリを追加。
 
     ```sh
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
     echo \
       "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
       $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
@@ -215,85 +230,113 @@ sudo do-release-upgrade
     ```sh
     git clone https://github.com/sige0002/wsl2_docker_ros2.git
     ```
-    > **注意**:
-    > クローンする際は、WSL内で実行してください。WindowsのコマンドプロンプトやPowerShellでは動作しません。また，developブランチの方が最新の情報が反映されているため、必要に応じてブランチを切り替えてください。
+    > **注意**:  
+    > クローンする際は、WSL内で実行してください。WindowsのコマンドプロンプトやPowerShellでは動作しません。また、developブランチの方が最新の情報が反映されているため、必要に応じてブランチを切り替えてください。
 
     ```sh
     git clone -b develop https://github.com/sige0002/wsl2_docker_ros2.git
     ```
 
-2. **`.env`ファイルの作成**  
-   `.env.example`をコピーして`.env`にリネームします。
-
-    ```sh
-    cp .env.example .env
-    ```
-
-3. **`.env`の編集**  
-   必要に応じて以下の値を編集します。
-
-   - `IMAGE_NAME`  
-     DockerイメージのベースとなるUbuntuのバージョンを指定します。  
-     例: `ubuntu:24.04`（Ubuntu 24.04 LTS）、`ubuntu:22.04`（Ubuntu 22.04 LTS）など
-
-   - `ROS_DISTRO_NAME`  
-     ROS2のディストリビューション名を指定します。  
-     例: `jazzy`, `humble`, `galactic`, `foxy` など
-
-   - プロキシ設定  
-     プロキシを使用しない場合は空欄のままにします。  
-     プロキシを使用する場合は、`http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`の値を設定してください。
-
-     > **注意:**  
-     > すべて空欄の場合のみビルドできる設定になっています。一部のみ変更したい場合は、`Dockerfile`内の該当箇所（`RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then ...`）を編集してください。
-
-4. **Dockerイメージのビルド**  
-   以下のコマンドをクローンしたフォルダディレクトリで実行して、Dockerイメージをビルドします。
-
+2. **プロジェクトディレクトリに移動**  
     ```sh
     cd wsl2_docker_ros2
-    docker compose build
     ```
 
-   これが成功すると、dockerイメージが作成されます。  
-   イメージの確認は以下のコマンドで行えます。
+3. **自動起動スクリプトの実行（推奨）**  
+   以下のコマンドを実行すると、環境設定から起動まで自動で行われます。
 
     ```sh
-    docker images
+    ./start_script/start.bash
     ```
 
-5. **コンテナの起動**  
-   以下のコマンドを実行して、Dockerコンテナを起動します。
+   このスクリプトは以下の処理を自動的に実行します：
+   - `.env`ファイルが存在しない場合、`environment/.env.example`から自動作成⇒プロキシが必要な場合は要変更
+   - `.env`ファイルが存在する場合はそのまま使用されます
+   - 現在の環境変数設定をターミナルに表示
+   - 既存のコンテナの停止・削除
+   - Dockerイメージのビルド
+   - コンテナの起動
+   - 未使用イメージのクリーンアップ
+
+4. **手動での環境設定（必要な場合のみ）**  
+   自動スクリプトを使用しない場合や、設定をカスタマイズしたい場合：
+
+   a. **`.env`ファイルの作成**  
+      ```sh
+      cp environment/.env.example .env
+      ```
+
+   b. **`.env`の編集**  
+      必要に応じて以下の値を編集します：
+
+      - `IMAGE_NAME`  
+        DockerイメージのベースとなるUbuntuのバージョンを指定します。  
+        例: `ubuntu:24.04`（Ubuntu 24.04 LTS）、`ubuntu:22.04`（Ubuntu 22.04 LTS）など
+
+      - `ROS_DISTRO_NAME`  
+        ROS2のディストリビューション名を指定します。  
+        例: `jazzy`, `humble`, `galactic`, `foxy` など
+
+      - プロキシ設定  
+        プロキシを使用しない場合は空欄のままにします。  
+        プロキシを使用する場合は、`http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`の値を設定してください。
+
+        > **注意:**  
+        > すべて空欄の場合もしくは，すべて設定してある場合のみビルドできる設定になっています。一部のみ変更したい場合は、`Dockerfile`内の該当箇所（`RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then ...`）を編集してください。
+
+   c. **手動でのDockerコマンド実行**  
+      ```sh
+      # イメージのビルド
+      docker compose build
+      
+      # コンテナの起動
+      docker compose up -d
+      ```
+
+5. **コンテナへの接続**  
+   コンテナが起動したら、以下のコマンドでコンテナに接続します：
 
     ```sh
-    docker compose up -d
+    docker compose exec ros bash
     ```
 
-   コンテナが起動したら、以下のコマンドでコンテナに接続します。
-
+   VS Codeでdevcontainer環境を使用する場合：
     ```sh
-    docker exec -it <コンテナ名> /bin/bash
+    code .
     ```
 
-   ここで `<コンテナ名>` は、`docker compose up` 実行時に表示されるコンテナ名を指定します。
+6. **動作確認**  
+   
+   a. **GUIアプリケーションの確認**  
+      コンテナ内でGUIアプリケーションを実行して、X11が正しく設定されているか確認します：
+      ```sh
+      xeyes
+      ```
+      `xeyes`（目玉のアプリケーション）が表示されれば成功です。
 
-6. **GUIアプリケーションの確認**  
-   コンテナ内でGUIアプリケーションを実行して、X11が正しく設定されているか確認します。
+   b. **ROS2の環境変数の確認**  
+      コンテナ内でROS2の環境変数が正しく設定されているか確認します：
+      ```sh
+      echo $ROS_DISTRO
+      ```
+      `humble` や `jazzy` など、指定したROS2ディストリビューション名が表示されれば成功です。
 
-    ```sh
-    xeyes
-    ```
+## プロジェクト構造
 
-   `xeyes`（目玉のアプリケーション）が表示されれば成功です。
-
-7. **ROS2の環境変数の確認**  
-   コンテナ内でROS2の環境変数が正しく設定されているか確認します。
-
-    ```sh
-    echo $ROS_DISTRO
-    ```
-
-   `humble` や `jazzy` など、指定したROS2ディストリビューション名が表示されれば成功です。
+```
+wsl2_docker_ros2/
+├── .devcontainer/          # VS Code DevContainer設定
+│   └── Dockerfile         # ROS2環境のDockerfile
+├── environment/           # 環境設定ファイル
+│   └── .env.example      # 環境変数のテンプレート
+├── start_script/          # 起動スクリプト
+│   └── start.bash        # 自動起動スクリプト
+├── ros2_workspace/        # ROS2ワークスペース
+├── components/            # 追加コンポーネント（SDK等）
+├── docker-compose.yml     # Docker Compose設定
+├── .env                  # 環境変数設定（自動生成 or 手動作成⇒プロキシなどがいる場合は要変更）
+└── README.md             # このファイル
+```
 
 ---
 

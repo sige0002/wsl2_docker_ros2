@@ -1,7 +1,7 @@
 {
-    "name": "ROS2 humble Dev Container",
+    "name": "ROS2 Dev Container",
     "dockerComposeFile": [
-        "docker-compose.yml"
+        "../docker-compose.yml"
     ],
     "service": "ros",
     "workspaceFolder": "/root",
