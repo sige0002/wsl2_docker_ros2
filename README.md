@@ -13,6 +13,7 @@
   - [1.3 Docker Engineのインストール](#13-docker-engineのインストール)
 - [2. 実行](#2-実行)
   - [インストール手順](#インストール手順)
+  - [プロジェクト構造](#プロジェクト構造)
 - [3. Tips](#3-tips)
   - [3.1 Gitのインストール](#31-gitのインストール)
   - [3.2 Git 初期化からGitHubへの初回アップロード手順](#32-git-初期化からgithubへの初回アップロード手順)
@@ -236,83 +237,106 @@ sudo do-release-upgrade
     git clone -b develop https://github.com/sige0002/wsl2_docker_ros2.git
     ```
 
-2. **`.env`ファイルの作成**  
-   `.env.example`をコピーして`.env`にリネームします。
-
-    ```sh
-    cp .env.example .env
-    ```
-
-3. **`.env`の編集**  
-   必要に応じて以下の値を編集します。
-
-   - `IMAGE_NAME`  
-     DockerイメージのベースとなるUbuntuのバージョンを指定します。  
-     例: `ubuntu:24.04`（Ubuntu 24.04 LTS）、`ubuntu:22.04`（Ubuntu 22.04 LTS）など
-
-   - `ROS_DISTRO_NAME`  
-     ROS2のディストリビューション名を指定します。  
-     例: `jazzy`, `humble`, `galactic`, `foxy` など
-
-   - プロキシ設定  
-     プロキシを使用しない場合は空欄のままにします。  
-     プロキシを使用する場合は、`http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`の値を設定してください。
-
-     > **注意:**  
-     > すべて空欄の場合もしくは，すべて設定してある場合のみビルドできる設定になっています。一部のみ変更したい場合は、`Dockerfile`内の該当箇所（`RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then ...`）を編集してください。
-
-4. **Dockerイメージのビルド**  
-   以下のコマンドをクローンしたフォルダディレクトリで実行して、Dockerイメージをビルドします。
-
+2. **プロジェクトディレクトリに移動**  
     ```sh
     cd wsl2_docker_ros2
-    docker compose build
     ```
 
-   これが成功すると、dockerイメージが作成されます。  
-   イメージの確認は以下のコマンドで行えます。
+3. **自動起動スクリプトの実行（推奨）**  
+   以下のコマンドを実行すると、環境設定から起動まで自動で行われます。
 
     ```sh
-    docker images
+    ./start_script/start.bash
     ```
 
-5. **コンテナの起動**  
-   以下のコマンドを実行して、Dockerコンテナを起動します。
+   このスクリプトは以下の処理を自動的に実行します：
+   - `.env`ファイルが存在しない場合、`environment/.env.example`から自動作成⇒プロキシが必要な場合は要変更
+   - `.env`ファイルが存在する場合はそのまま使用されます
+   - 現在の環境変数設定をターミナルに表示
+   - 既存のコンテナの停止・削除
+   - Dockerイメージのビルド
+   - コンテナの起動
+   - 未使用イメージのクリーンアップ
+
+4. **手動での環境設定（必要な場合のみ）**  
+   自動スクリプトを使用しない場合や、設定をカスタマイズしたい場合：
+
+   a. **`.env`ファイルの作成**  
+      ```sh
+      cp environment/.env.example .env
+      ```
+
+   b. **`.env`の編集**  
+      必要に応じて以下の値を編集します：
+
+      - `IMAGE_NAME`  
+        DockerイメージのベースとなるUbuntuのバージョンを指定します。  
+        例: `ubuntu:24.04`（Ubuntu 24.04 LTS）、`ubuntu:22.04`（Ubuntu 22.04 LTS）など
+
+      - `ROS_DISTRO_NAME`  
+        ROS2のディストリビューション名を指定します。  
+        例: `jazzy`, `humble`, `galactic`, `foxy` など
+
+      - プロキシ設定  
+        プロキシを使用しない場合は空欄のままにします。  
+        プロキシを使用する場合は、`http_proxy`, `https_proxy`, `HTTP_PROXY`, `HTTPS_PROXY`の値を設定してください。
+
+        > **注意:**  
+        > すべて空欄の場合もしくは，すべて設定してある場合のみビルドできる設定になっています。一部のみ変更したい場合は、`Dockerfile`内の該当箇所（`RUN if [ -z "$http_proxy" ] && [ -z "$https_proxy" ]; then ...`）を編集してください。
+
+   c. **手動でのDockerコマンド実行**  
+      ```sh
+      # イメージのビルド
+      docker compose build
+      
+      # コンテナの起動
+      docker compose up -d
+      ```
+
+5. **コンテナへの接続**  
+   コンテナが起動したら、以下のコマンドでコンテナに接続します：
 
     ```sh
-    docker compose up -d
+    docker compose exec ros bash
     ```
 
-   コンテナが起動したら、以下のコマンドでコンテナに接続します。
-
-    ```sh
-    docker exec -it <コンテナ名> /bin/bash
-    ```
-
-   ここで `<コンテナ名>` は、`docker compose up` 実行時に表示されるコンテナ名を指定します。
-   devcontainerを使ったvscode開発環境を構築する場合，.devcontainerがあるディレクトリで以下のコマンドを実行します。
-
+   VS Codeでdevcontainer環境を使用する場合：
     ```sh
     code .
     ```
 
-6. **GUIアプリケーションの確認**  
-   コンテナ内でGUIアプリケーションを実行して、X11が正しく設定されているか確認します。
+6. **動作確認**  
+   
+   a. **GUIアプリケーションの確認**  
+      コンテナ内でGUIアプリケーションを実行して、X11が正しく設定されているか確認します：
+      ```sh
+      xeyes
+      ```
+      `xeyes`（目玉のアプリケーション）が表示されれば成功です。
 
-    ```sh
-    xeyes
-    ```
+   b. **ROS2の環境変数の確認**  
+      コンテナ内でROS2の環境変数が正しく設定されているか確認します：
+      ```sh
+      echo $ROS_DISTRO
+      ```
+      `humble` や `jazzy` など、指定したROS2ディストリビューション名が表示されれば成功です。
 
-   `xeyes`（目玉のアプリケーション）が表示されれば成功です。
+## プロジェクト構造
 
-7. **ROS2の環境変数の確認**  
-   コンテナ内でROS2の環境変数が正しく設定されているか確認します。
-
-    ```sh
-    echo $ROS_DISTRO
-    ```
-
-   `humble` や `jazzy` など、指定したROS2ディストリビューション名が表示されれば成功です。
+```
+wsl2_docker_ros2/
+├── .devcontainer/          # VS Code DevContainer設定
+│   └── Dockerfile         # ROS2環境のDockerfile
+├── environment/           # 環境設定ファイル
+│   └── .env.example      # 環境変数のテンプレート
+├── start_script/          # 起動スクリプト
+│   └── start.bash        # 自動起動スクリプト
+├── ros2_workspace/        # ROS2ワークスペース
+├── components/            # 追加コンポーネント（SDK等）
+├── docker-compose.yml     # Docker Compose設定
+├── .env                  # 環境変数設定（自動生成 or 手動作成⇒プロキシなどがいる場合は要変更）
+└── README.md             # このファイル
+```
 
 ---
 

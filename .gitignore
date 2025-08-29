@@ -20,6 +20,11 @@ ros2_workspace/log/
 # 大きなファイル（ZIP、SDK等）
 ros2_workspace/src/*.zip
 
+# ---------- 管理対象外にするディレクトリ ----------
+# リポジトリ直下のディレクトリ全体を無視する
+/components/
+/ros2_workspace/
+
 # ---------- アーカイブ・バイナリファイル ----------
 *.zip
 *.tar.gz
