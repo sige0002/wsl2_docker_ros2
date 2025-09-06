@@ -22,6 +22,9 @@
 
 # WSL2とDocker EngineでROS2環境を構築する
 
+> 実行・起動方法のクイックスタートは `docs/USAGE.md` を参照してください。
+> スクリプトは `./start.bash`（ルート直下）にあります。
+
 ---
 
 # はじめに
@@ -246,7 +249,7 @@ sudo do-release-upgrade
    以下のコマンドを実行すると、環境設定から起動まで自動で行われます。
 
     ```sh
-    ./start_script/start.bash
+    ./start.bash
     ```
 
    このスクリプトは以下の処理を自動的に実行します：
@@ -329,7 +332,7 @@ wsl2_docker_ros2/
 │   └── Dockerfile         # ROS2環境のDockerfile
 ├── environment/           # 環境設定ファイル
 │   └── .env.example      # 環境変数のテンプレート
-├── start_script/          # 起動スクリプト
+├── start.bash             # 起動スクリプト（ルート直下）
 │   └── start.bash        # 自動起動スクリプト
 ├── ros2_workspace/        # ROS2ワークスペース
 ├── components/            # 追加コンポーネント（SDK等）
