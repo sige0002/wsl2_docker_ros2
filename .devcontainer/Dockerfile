@@ -121,3 +121,23 @@ RUN usermod -a -G dialout,plugdev root
 USER root
 WORKDIR /root
 
+# ---------- Nav2 ステージ ----------
+FROM ros2 AS nav2
+
+# 再定義
+ARG ROS_DISTRO_NAME
+ARG http_proxy
+ARG https_proxy
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+
+ENV http_proxy=${http_proxy}
+ENV https_proxy=${https_proxy}
+ENV HTTP_PROXY=${HTTP_PROXY}
+ENV HTTPS_PROXY=${HTTPS_PROXY}
+
+# Nav2 と bringup を追加インストール
+RUN apt-get update && apt-get install -y \
+    ros-${ROS_DISTRO_NAME}-navigation2 \
+    ros-${ROS_DISTRO_NAME}-nav2-bringup \
+    && rm -rf /var/lib/apt/lists/*

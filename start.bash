@@ -24,6 +24,7 @@ FIXED_NAME="0"
 DRY_RUN="0"
 DO_UP="0"
 DO_START="0"
+COMPOSE_FILE="docker-compose.yml"
 while [ $# -gt 0 ]; do
   case "$1" in
     -h|--help)
@@ -53,6 +54,10 @@ USAGE
       DO_UP="1"; shift;;
     -start|--start)
       DO_START="1"; shift;;
+    --compose)
+      COMPOSE_FILE="$2"; shift 2;;
+    --nav2)
+      COMPOSE_FILE="docker-compose.nav2.yml"; shift;;
     *) echo "Unknown arg: $1"; exit 1;;
   esac
 done
@@ -116,14 +121,20 @@ if [ -n "$NAME_ARG" ]; then
   export CONTAINER_NAME="$NAME_ARG"
 fi
 
+# nav2 用 compose を使う場合は接頭辞を nav2 に
+SERVICE_PREFIX="ros"
+case "$COMPOSE_FILE" in
+  *nav2* ) SERVICE_PREFIX="nav2";;
+esac
+
 if [ -z "${CONTAINER_NAME:-}" ]; then
   if [ "$FIXED_NAME" = "1" ]; then
-    export CONTAINER_NAME="ros-${ROS_DISTRO_NAME}-docker"
+    export CONTAINER_NAME="${SERVICE_PREFIX}-${ROS_DISTRO_NAME}-docker"
   else
     # ランダム接尾辞（10桁）
     suffix="-$(date +%s%N | sha256sum | head -c 10)"
     export NAME_SUFFIX="$suffix"
-    export CONTAINER_NAME="ros-${ROS_DISTRO_NAME}-docker$suffix"
+    export CONTAINER_NAME="${SERVICE_PREFIX}-${ROS_DISTRO_NAME}-docker$suffix"
   fi
 fi
 
@@ -132,6 +143,7 @@ echo "=== 起動パラメータ（確認） ==="
 echo "ROS_DISTRO_NAME = ${ROS_DISTRO_NAME:-}"
 echo "IMAGE_NAME      = ${IMAGE_NAME:-}"
 echo "CONTAINER_NAME  = ${CONTAINER_NAME:-}"
+echo "COMPOSE_FILE    = ${COMPOSE_FILE}"
 echo "DISPLAY         = ${DISPLAY:-}"
 echo "http_proxy      = ${http_proxy:-}"
 echo "https_proxy     = ${https_proxy:-}"
@@ -153,7 +165,7 @@ confirm() {
 
 if [ "$DRY_RUN" = "1" ]; then
   echo "[DRY RUN] docker compose build"
-  echo "[DRY RUN] docker compose up -d"
+  echo "[DRY RUN] docker compose -f ${COMPOSE_FILE} up -d"
   echo "[DRY RUN] docker image prune -f"
   exit 0
 fi
@@ -162,7 +174,7 @@ run_logs_and_trap() {
   echo "=== ログを追跡中（Ctrl+C で操作メニュー） ==="
   # ログ追跡中のみ Ctrl+C をメニューに差し替える
   trap 'on_ctrl_c' INT
-  docker compose logs -f || true
+  docker compose -f "${COMPOSE_FILE}" logs -f || true
   # 既定の Ctrl+C ハンドラへ戻す
   trap 'echo; echo "Ctrl+C でキャンセルしました"; exit 130' INT
 }
@@ -191,9 +203,9 @@ on_ctrl_c() {
 
 perform_up() {
   echo "=== Docker イメージをビルド中 ==="
-  docker compose build
+  docker compose -f "${COMPOSE_FILE}" build
   echo "=== コンテナを起動中 (up -d) ==="
-  docker compose up -d
+  docker compose -f "${COMPOSE_FILE}" up -d
   echo "=== 未使用イメージのクリーンアップ ==="
   docker image prune -f
   echo "=== 起動完了 ==="
@@ -202,7 +214,7 @@ perform_up() {
 
 if [ "$DO_START" = "1" ]; then
   if confirm "docker compose start を実行します。よろしいですか？"; then
-    docker compose start
+    docker compose -f "${COMPOSE_FILE}" start
     # start 後はログ追跡に入り、Ctrl+C メニューを有効化
     run_logs_and_trap
   else
