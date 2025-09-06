@@ -1,10 +1,10 @@
-# ---------- ビルド引数 ----------
-ARG IMAGE_NAME
-ARG ROS_DISTRO_NAME
-ARG http_proxy
-ARG https_proxy
-ARG HTTP_PROXY
-ARG HTTPS_PROXY
+# ---------- ビルド引数（デフォルト付きで警告回避） ----------
+ARG IMAGE_NAME=ubuntu:24.04
+ARG ROS_DISTRO_NAME=jazzy
+ARG http_proxy=""
+ARG https_proxy=""
+ARG HTTP_PROXY=""
+ARG HTTPS_PROXY=""
 
 # ---------- ベースイメージ ----------
 FROM ${IMAGE_NAME} AS base
@@ -120,5 +120,4 @@ RUN usermod -a -G dialout,plugdev root
 # ros2ユーザーで作業を続ける場合
 USER root
 WORKDIR /root
-
 
