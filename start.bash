@@ -56,8 +56,6 @@ USAGE
       DO_START="1"; shift;;
     --compose)
       COMPOSE_FILE="$2"; shift 2;;
-    --nav2)
-      COMPOSE_FILE="docker-compose.nav2.yml"; shift;;
     *) echo "Unknown arg: $1"; exit 1;;
   esac
 done
@@ -121,11 +119,7 @@ if [ -n "$NAME_ARG" ]; then
   export CONTAINER_NAME="$NAME_ARG"
 fi
 
-# nav2 用 compose を使う場合は接頭辞を nav2 に
 SERVICE_PREFIX="ros"
-case "$COMPOSE_FILE" in
-  *nav2* ) SERVICE_PREFIX="nav2";;
-esac
 
 if [ -z "${CONTAINER_NAME:-}" ]; then
   if [ "$FIXED_NAME" = "1" ]; then
